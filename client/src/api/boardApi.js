@@ -10,6 +10,16 @@ export async function createBoard(title) {
   return res.json();
 }
 
+export async function updateBoard(id, title) {
+  const res = await fetch(`${BASE_URL}/boards/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) throw new Error('Failed to update board');
+  return res.json();
+}
+
 export async function getBoards() {
   const res = await fetch(`${BASE_URL}/boards`);
   if (!res.ok) throw new Error('Failed to fetch boards');

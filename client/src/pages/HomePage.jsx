@@ -9,12 +9,9 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
 
   const handleCreateBoard = async () => {
-    const title = prompt('Enter board name:', 'My Task Board');
-    if (!title || !title.trim()) return;
-
     try {
       setLoading(true);
-      const newBoard = await createBoard(title.trim());
+      const newBoard = await createBoard('Board');
       navigate(`/board/${newBoard._id}`);
     } catch (err) {
       alert(err.message || 'Error creating board');

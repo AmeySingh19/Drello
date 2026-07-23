@@ -9,6 +9,7 @@ import {
   createTask,
   deleteTask,
   moveTask,
+  updateBoard,
 } from '../api/boardApi';
 import Column from '../components/Column';
 import Footer from '../components/Footer';
@@ -20,6 +21,8 @@ function BoardPage() {
   const [boardData, setBoardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState('');
 
   const fetchBoardData = useCallback(async (targetId) => {
     try {
@@ -161,6 +164,20 @@ function BoardPage() {
     }
   };
 
+  const handleUpdateBoardTitle = async () => {
+    if (!editedTitle.trim()) {
+      setIsEditingTitle(false);
+      return;
+    }
+    try {
+      await updateBoard(boardData.board._id, editedTitle.trim());
+      await fetchBoardData(boardData.board._id);
+    } catch (err) {
+      alert(err.message || 'Failed to update board title');
+    }
+    setIsEditingTitle(false);
+  };
+
   return (
     <div className="page-container starthack-board-container">
       {/* Floating Pill Nav Dock */}
@@ -170,10 +187,33 @@ function BoardPage() {
       <header className="board-header-bar">
         <div className="board-header-left">
           <Link to="/" className="brand-mono-title">
-            Mrolla
+            Drello
           </Link>
           {boardData?.board?.title && (
-            <span className="board-mono-subtitle">{boardData.board.title}</span>
+            isEditingTitle ? (
+              <input
+                className="board-mono-subtitle"
+                style={{ background: 'transparent', border: '1px solid #333', color: 'inherit', outline: 'none' }}
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                onBlur={handleUpdateBoardTitle}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleUpdateBoardTitle();
+                  if (e.key === 'Escape') setIsEditingTitle(false);
+                }}
+                autoFocus
+              />
+            ) : (
+              <span
+                className="board-mono-subtitle"
+                onDoubleClick={() => {
+                  setEditedTitle(boardData.board.title);
+                  setIsEditingTitle(true);
+                }}
+              >
+                {boardData.board.title}
+              </span>
+            )
           )}
         </div>
         <div className="board-actions">

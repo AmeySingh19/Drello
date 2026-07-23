@@ -30,12 +30,12 @@ function Footer() {
                 </svg>
               </button>
             </div>
-            <p className="copyright-text">© 2026 Mrolla Systems Pvt Ltd.</p>
+            <p className="copyright-text">© 2026 Drello Systems Pvt Ltd.</p>
           </div>
         </div>
 
         <div className="footer-right-col">
-          <span className="brand-signature">Mrolla.io</span>
+          <span className="brand-signature">Drello.io</span>
         </div>
       </div>
     </footer>
