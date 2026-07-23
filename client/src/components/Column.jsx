@@ -1,25 +1,49 @@
+import { useState } from 'react';
 import TaskCard from './TaskCard';
 
-function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask }) {
-  const handleAddTask = () => {
-    const title = prompt('Enter task title:');
-    if (title && title.trim()) {
-      onAddTask(column._id, title.trim());
+function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask, onUpdateColumn, onUpdateTask }) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(column.title);
+
+  const handleUpdateTitle = () => {
+    if (editedTitle.trim() && editedTitle !== column.title) {
+      onUpdateColumn(column._id, editedTitle.trim());
+    } else {
+      setEditedTitle(column.title);
     }
+    setIsEditingTitle(false);
   };
 
-  const taskCount = column.tasks ? column.tasks.length : 0;
+  const handleAddTask = () => {
+    onAddTask(column._id, '+');
+  };
+
 
   return (
     <div className="column">
       <div className="column-header">
         <div className="column-title-box">
-          <h3 className="column-title">{column.title}</h3>
-          <span className="column-count-badge">{taskCount}</span>
+          {isEditingTitle ? (
+            <input
+              className="column-title-input"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              onBlur={handleUpdateTitle}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleUpdateTitle();
+                if (e.key === 'Escape') {
+                  setEditedTitle(column.title);
+                  setIsEditingTitle(false);
+                }
+              }}
+              autoFocus
+            />
+          ) : (
+            <h3 className="column-title" onDoubleClick={() => setIsEditingTitle(true)} title="Double click to edit">
+              {column.title || 'add column name'}
+            </h3>
+          )}
         </div>
-        <button className="btn-mono-action" style={{ fontSize: '10px', padding: '4px 8px' }} onClick={handleAddTask}>
-          + Task
-        </button>
       </div>
 
       <div className="column-tasks">
@@ -31,11 +55,16 @@ function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask }) {
               columns={columns}
               onDelete={onDeleteTask}
               onMove={onMoveTask}
+              onUpdate={onUpdateTask}
             />
           ))
-        ) : (
-          <div className="empty-column-text">No tasks</div>
-        )}
+        ) : null}
+        <div 
+          className="add-task-btn" 
+          onClick={handleAddTask} 
+        >
+          <span>+</span>
+        </div>
       </div>
     </div>
   );

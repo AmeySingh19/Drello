@@ -50,6 +50,16 @@ export async function deleteColumn(id) {
   return res.json();
 }
 
+export async function updateColumn(id, title) {
+  const res = await fetch(`${BASE_URL}/columns/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) throw new Error('Failed to update column');
+  return res.json();
+}
+
 export async function createTask(columnId, title, description = '', order = 0) {
   const res = await fetch(`${BASE_URL}/tasks`, {
     method: 'POST',
@@ -65,6 +75,16 @@ export async function deleteTask(id) {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to delete task');
+  return res.json();
+}
+
+export async function updateTask(id, title) {
+  const res = await fetch(`${BASE_URL}/tasks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title }),
+  });
+  if (!res.ok) throw new Error('Failed to update task');
   return res.json();
 }
 

@@ -335,65 +335,101 @@ html, body {
 
 .columns-wrapper {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   padding: 20px;
   overflow-x: auto;
   overflow-y: hidden;
   height: 100%;
+  width: 100%;
   align-items: flex-start;
+  justify-content: flex-start;
 }
 
 /* Column Container */
 .column {
-  width: 290px;
-  min-width: 290px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 340px;
+  min-height: 150px;
   max-height: calc(100% - 10px);
-  background-color: #0d0d10;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 14px;
+  background-color: rgba(18, 18, 21, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.column:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
 .column-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  justify-content: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
 }
 
 .column-title-box {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
 }
 
 .column-title {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--foreground);
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
   word-break: break-word;
+  text-align: center;
+  cursor: pointer;
+  margin: 0;
+  transition: color 0.15s ease;
 }
 
-.column-count-badge {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  background-color: rgba(244, 244, 245, 0.1);
-  color: var(--muted-foreground);
-  padding: 1px 6px;
-  border-radius: 2px;
+.column-title:hover {
+  color: #fff;
+}
+
+.column-title-input {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  outline: none;
+  font-family: var(--font-inter);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  width: 90%;
+  padding: 4px 8px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  transition: border-color 0.15s ease;
+}
+
+.column-title-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .column-tasks {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   overflow-y: auto;
-  padding-right: 2px;
+  padding: 16px;
 }
 
 .empty-column-text {
@@ -409,19 +445,50 @@ html, body {
 
 /* Task Card */
 .task-card {
-  background-color: var(--card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  padding: 10px 12px;
+  background-color: rgba(24, 24, 27, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  transition: all 0.15s ease;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .task-card:hover {
-  background-color: var(--card-hover);
-  border-color: var(--border);
+  background-color: rgba(30, 30, 34, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.add-task-btn {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.add-task-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.add-task-btn span {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: color 0.2s ease;
+}
+
+.add-task-btn:hover span {
+  color: #fff;
 }
 
 .task-card-content {

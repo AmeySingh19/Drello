@@ -10,6 +10,8 @@ import {
   deleteTask,
   moveTask,
   updateBoard,
+  updateColumn,
+  updateTask,
 } from '../api/boardApi';
 import Column from '../components/Column';
 import Footer from '../components/Footer';
@@ -28,15 +30,7 @@ function BoardPage() {
     try {
       const data = await getBoard(targetId);
 
-      // Auto-initialize default columns if empty (To do, Started, Completed)
-      if (data.board && (!data.columns || data.columns.length === 0)) {
-        const defaultColumns = ['To do', 'Started', 'Completed'];
-        for (let i = 0; i < defaultColumns.length; i++) {
-          await createColumn(data.board._id, defaultColumns[i], i);
-        }
-        const updatedData = await getBoard(data.board._id);
-        setBoardData(updatedData);
-      } else {
+      if (data.board) {
         setBoardData(data);
       }
       setError(null);
@@ -81,14 +75,13 @@ function BoardPage() {
   }, [id, navigate, fetchBoardData]);
 
   const handleAddColumn = async () => {
-    const title = prompt('Enter column title:');
-    if (!title || !title.trim()) return;
-
     if (!boardData?.board?._id) return;
 
     try {
       const order = boardData?.columns ? boardData.columns.length : 0;
-      await createColumn(boardData.board._id, title.trim(), order);
+      const newCol = await createColumn(boardData.board._id, 'add column name', order);
+      // Automatically add a task placeholder with "+" sign interaction as per requirements
+      await createTask(newCol._id, '+');
       await fetchBoardData(boardData.board._id);
     } catch (err) {
       alert(err.message || 'Failed to add column');
@@ -161,6 +154,28 @@ function BoardPage() {
       }
     } catch (err) {
       alert(err.message || 'Failed to move task');
+    }
+  };
+
+  const handleUpdateColumn = async (columnId, title) => {
+    try {
+      await updateColumn(columnId, title);
+      if (boardData?.board?._id) {
+        await fetchBoardData(boardData.board._id);
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to update column');
+    }
+  };
+
+  const handleUpdateTask = async (taskId, title) => {
+    try {
+      await updateTask(taskId, title);
+      if (boardData?.board?._id) {
+        await fetchBoardData(boardData.board._id);
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to update task');
     }
   };
 
@@ -245,6 +260,8 @@ function BoardPage() {
                   onAddTask={handleAddTask}
                   onDeleteTask={handleDeleteTask}
                   onMoveTask={handleMoveTask}
+                  onUpdateColumn={handleUpdateColumn}
+                  onUpdateTask={handleUpdateTask}
                 />
               ))
             ) : (
