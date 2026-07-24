@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { DragDropContext } from '@hello-pangea/dnd';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {
   getBoard,
   getBoards,
@@ -25,6 +27,8 @@ function BoardPage() {
   const [error, setError] = useState(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [animationParent] = useAutoAnimate();
 
   const fetchBoardData = useCallback(async (targetId) => {
     try {
@@ -80,45 +84,18 @@ function BoardPage() {
     try {
       const order = boardData?.columns ? boardData.columns.length : 0;
       const newCol = await createColumn(boardData.board._id, 'add column name', order);
-      // Automatically add a task placeholder with "+" sign interaction as per requirements
-      await createTask(newCol._id, '+');
       await fetchBoardData(boardData.board._id);
     } catch (err) {
       alert(err.message || 'Failed to add column');
     }
   };
 
-  const handleDeleteColumn = async () => {
-    if (!boardData?.columns || boardData.columns.length === 0) {
-      alert('No columns available to delete.');
-      return;
-    }
-
-    const columnListStr = boardData.columns
-      .map((col, idx) => `${idx + 1}. ${col.title}`)
-      .join('\n');
-
-    const input = prompt(
-      `Enter the number or title of the column to delete:\n\n${columnListStr}`
-    );
-
-    if (!input || !input.trim()) return;
-
-    const trimmedInput = input.trim().toLowerCase();
-    const colIndex = parseInt(trimmedInput, 10) - 1;
-    const targetColumn =
-      !isNaN(colIndex) && colIndex >= 0 && colIndex < boardData.columns.length
-        ? boardData.columns[colIndex]
-        : boardData.columns.find((col) => col.title.toLowerCase() === trimmedInput);
-
-    if (!targetColumn) {
-      alert('Column not found.');
-      return;
-    }
-
+  const handleDeleteColumnById = async (columnId) => {
     try {
-      await deleteColumn(targetColumn._id);
-      await fetchBoardData(boardData.board._id);
+      await deleteColumn(columnId);
+      if (boardData?.board?._id) {
+        await fetchBoardData(boardData.board._id);
+      }
     } catch (err) {
       alert(err.message || 'Failed to delete column');
     }
@@ -146,7 +123,7 @@ function BoardPage() {
     }
   };
 
-  const handleMoveTask = async (taskId, columnId) => {
+  const handleMoveTaskFallback = async (taskId, columnId) => {
     try {
       await moveTask(taskId, columnId);
       if (boardData?.board?._id) {
@@ -154,6 +131,55 @@ function BoardPage() {
       }
     } catch (err) {
       alert(err.message || 'Failed to move task');
+    }
+  };
+
+  const handleDragEnd = async (result) => {
+    const { source, destination, draggableId } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+
+    const sourceColIndex = boardData.columns.findIndex(col => col._id === source.droppableId);
+    const destColIndex = boardData.columns.findIndex(col => col._id === destination.droppableId);
+
+    if (sourceColIndex === -1 || destColIndex === -1) return;
+
+    const newBoardData = { ...boardData };
+    const sourceCol = { ...newBoardData.columns[sourceColIndex] };
+    const destCol = { ...newBoardData.columns[destColIndex] };
+
+    const sourceTasks = Array.from(sourceCol.tasks || []);
+    const [movedTask] = sourceTasks.splice(source.index, 1);
+
+    if (source.droppableId === destination.droppableId) {
+      sourceTasks.splice(destination.index, 0, movedTask);
+      sourceCol.tasks = sourceTasks;
+      newBoardData.columns[sourceColIndex] = sourceCol;
+      
+      setBoardData(newBoardData);
+      
+      try {
+        await Promise.all(sourceTasks.map((t, index) => moveTask(t._id, source.droppableId, index)));
+      } catch (err) {
+        console.error('Failed to save task order:', err);
+      }
+    } else {
+      const destTasks = Array.from(destCol.tasks || []);
+      movedTask.columnId = destination.droppableId;
+      destTasks.splice(destination.index, 0, movedTask);
+      
+      sourceCol.tasks = sourceTasks;
+      destCol.tasks = destTasks;
+      newBoardData.columns[sourceColIndex] = sourceCol;
+      newBoardData.columns[destColIndex] = destCol;
+      
+      setBoardData(newBoardData);
+      
+      try {
+        await Promise.all(destTasks.map((t, index) => moveTask(t._id, destination.droppableId, index)));
+      } catch (err) {
+        console.error('Failed to save task order:', err);
+      }
     }
   };
 
@@ -235,8 +261,11 @@ function BoardPage() {
           <button className="btn-mono-action" onClick={handleAddColumn}>
             Add a column
           </button>
-          <button className="btn-mono-action btn-mono-danger" onClick={handleDeleteColumn}>
-            Delete a column
+          <button 
+            className={`btn-mono-action ${isDeleteMode ? '' : 'btn-mono-danger'}`} 
+            onClick={() => setIsDeleteMode(!isDeleteMode)}
+          >
+            {isDeleteMode ? 'Done deleting' : 'Delete a column'}
           </button>
         </div>
       </header>
@@ -250,26 +279,30 @@ function BoardPage() {
         ) : error ? (
           <div className="status-message" style={{ color: '#fca5a5' }}>{error}</div>
         ) : (
-          <div className="columns-wrapper">
-            {boardData?.columns && boardData.columns.length > 0 ? (
-              boardData.columns.map((column) => (
-                <Column
-                  key={column._id}
-                  column={column}
-                  columns={boardData.columns}
-                  onAddTask={handleAddTask}
-                  onDeleteTask={handleDeleteTask}
-                  onMoveTask={handleMoveTask}
-                  onUpdateColumn={handleUpdateColumn}
-                  onUpdateTask={handleUpdateTask}
-                />
-              ))
-            ) : (
-              <div className="empty-board-message">
-                No columns initialized. Click <strong>"Add a column"</strong> to start.
-              </div>
-            )}
-          </div>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <div className="columns-wrapper" ref={animationParent}>
+              {boardData?.columns && boardData.columns.length > 0 ? (
+                boardData.columns.map((column) => (
+                  <Column
+                    key={column._id}
+                    column={column}
+                    columns={boardData.columns}
+                    isDeleteMode={isDeleteMode}
+                    onDeleteColumn={handleDeleteColumnById}
+                    onAddTask={handleAddTask}
+                    onDeleteTask={handleDeleteTask}
+                    onMoveTask={handleMoveTaskFallback}
+                    onUpdateColumn={handleUpdateColumn}
+                    onUpdateTask={handleUpdateTask}
+                  />
+                ))
+              ) : (
+                <div className="empty-board-message">
+                  Click <strong>"Add a column"</strong> to start.
+                </div>
+              )}
+            </div>
+          </DragDropContext>
         )}
       </main>
 

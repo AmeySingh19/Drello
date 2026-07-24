@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { Droppable } from '@hello-pangea/dnd';
 import TaskCard from './TaskCard';
 
-function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask, onUpdateColumn, onUpdateTask }) {
+function Column({ column, columns, isDeleteMode, onDeleteColumn, onAddTask, onDeleteTask, onMoveTask, onUpdateColumn, onUpdateTask }) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState(column.title);
 
-  const handleUpdateTitle = () => {
+  const handleUpdateTitle = async () => {
     if (editedTitle.trim() && editedTitle !== column.title) {
-      onUpdateColumn(column._id, editedTitle.trim());
+      await onUpdateColumn(column._id, editedTitle.trim());
     } else {
       setEditedTitle(column.title);
     }
@@ -17,7 +18,6 @@ function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask, onUpdate
   const handleAddTask = () => {
     onAddTask(column._id, '+');
   };
-
 
   return (
     <div className="column">
@@ -39,33 +39,55 @@ function Column({ column, columns, onAddTask, onDeleteTask, onMoveTask, onUpdate
               autoFocus
             />
           ) : (
-            <h3 className="column-title" onDoubleClick={() => setIsEditingTitle(true)} title="Double click to edit">
+            <h3 className="column-title" onDoubleClick={() => {
+              setIsEditingTitle(true);
+              setEditedTitle(column.title === 'add column name' ? '' : column.title);
+            }} title="Double click to edit">
               {column.title || 'add column name'}
             </h3>
+          )}
+          {isDeleteMode && (
+            <button 
+              className="column-delete-btn" 
+              onClick={() => onDeleteColumn(column._id)}
+              title="Delete column"
+            >
+              &times;
+            </button>
           )}
         </div>
       </div>
 
-      <div className="column-tasks">
-        {column.tasks && column.tasks.length > 0 ? (
-          column.tasks.map((task) => (
-            <TaskCard
-              key={task._id}
-              task={task}
-              columns={columns}
-              onDelete={onDeleteTask}
-              onMove={onMoveTask}
-              onUpdate={onUpdateTask}
-            />
-          ))
-        ) : null}
-        <div 
-          className="add-task-btn" 
-          onClick={handleAddTask} 
-        >
-          <span>+</span>
-        </div>
-      </div>
+      <Droppable droppableId={column._id}>
+        {(provided) => (
+          <div 
+            className="column-tasks"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {column.tasks && column.tasks.length > 0 ? (
+              column.tasks.map((task, index) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  index={index}
+                  columns={columns}
+                  onDelete={onDeleteTask}
+                  onMove={onMoveTask}
+                  onUpdate={onUpdateTask}
+                />
+              ))
+            ) : null}
+            {provided.placeholder}
+            <div 
+              className="add-task-btn" 
+              onClick={handleAddTask} 
+            >
+              <span>+</span>
+            </div>
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 }

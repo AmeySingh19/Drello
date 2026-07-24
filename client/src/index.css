@@ -353,16 +353,25 @@ html, body {
   min-height: 150px;
   max-height: calc(100% - 10px);
   background-color: rgba(18, 18, 21, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.column::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .column:hover {
@@ -385,6 +394,24 @@ html, body {
   justify-content: center;
   gap: 8px;
   width: 100%;
+  position: relative;
+}
+
+.column-delete-btn {
+  position: absolute;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: var(--muted-foreground);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.column-delete-btn:hover {
+  color: #fca5a5;
 }
 
 .column-title {
