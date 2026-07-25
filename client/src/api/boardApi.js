@@ -1,9 +1,17 @@
 const BASE_URL = 'http://localhost:5000/api';
 
+const getHeaders = () => {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
+  };
+};
+
 export async function createBoard(title) {
   const res = await fetch(`${BASE_URL}/boards`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ title }),
   });
   if (!res.ok) throw new Error('Failed to create board');
@@ -13,7 +21,7 @@ export async function createBoard(title) {
 export async function updateBoard(id, title) {
   const res = await fetch(`${BASE_URL}/boards/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ title }),
   });
   if (!res.ok) throw new Error('Failed to update board');
@@ -21,13 +29,17 @@ export async function updateBoard(id, title) {
 }
 
 export async function getBoards() {
-  const res = await fetch(`${BASE_URL}/boards`);
+  const res = await fetch(`${BASE_URL}/boards`, {
+    headers: getHeaders(),
+  });
   if (!res.ok) throw new Error('Failed to fetch boards');
   return res.json();
 }
 
 export async function getBoard(id) {
-  const res = await fetch(`${BASE_URL}/boards/${id}`);
+  const res = await fetch(`${BASE_URL}/boards/${id}`, {
+    headers: getHeaders(),
+  });
   if (!res.ok) throw new Error('Failed to fetch board');
   return res.json();
 }
@@ -35,7 +47,7 @@ export async function getBoard(id) {
 export async function createColumn(boardId, title, order = 0) {
   const res = await fetch(`${BASE_URL}/columns`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ boardId, title, order }),
   });
   if (!res.ok) throw new Error('Failed to create column');
@@ -45,16 +57,17 @@ export async function createColumn(boardId, title, order = 0) {
 export async function deleteColumn(id) {
   const res = await fetch(`${BASE_URL}/columns/${id}`, {
     method: 'DELETE',
+    headers: getHeaders(),
   });
   if (!res.ok) throw new Error('Failed to delete column');
   return res.json();
 }
 
-export async function updateColumn(id, title) {
+export async function updateColumn(id, title, color) {
   const res = await fetch(`${BASE_URL}/columns/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
+    headers: getHeaders(),
+    body: JSON.stringify({ title, color }),
   });
   if (!res.ok) throw new Error('Failed to update column');
   return res.json();
@@ -63,7 +76,7 @@ export async function updateColumn(id, title) {
 export async function createTask(columnId, title, description = '', order = 0) {
   const res = await fetch(`${BASE_URL}/tasks`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ columnId, title, description, order }),
   });
   if (!res.ok) throw new Error('Failed to create task');
@@ -73,6 +86,7 @@ export async function createTask(columnId, title, description = '', order = 0) {
 export async function deleteTask(id) {
   const res = await fetch(`${BASE_URL}/tasks/${id}`, {
     method: 'DELETE',
+    headers: getHeaders(),
   });
   if (!res.ok) throw new Error('Failed to delete task');
   return res.json();
@@ -81,7 +95,7 @@ export async function deleteTask(id) {
 export async function updateTask(id, title) {
   const res = await fetch(`${BASE_URL}/tasks/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ title }),
   });
   if (!res.ok) throw new Error('Failed to update task');
@@ -91,7 +105,7 @@ export async function updateTask(id, title) {
 export async function moveTask(id, columnId, order) {
   const res = await fetch(`${BASE_URL}/tasks/${id}/move`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify({ columnId, order }),
   });
   if (!res.ok) throw new Error('Failed to move task');

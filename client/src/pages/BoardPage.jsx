@@ -91,12 +91,26 @@ function BoardPage() {
   };
 
   const handleDeleteColumnById = async (columnId) => {
+    const previousBoardData = boardData;
+    
+    // Optimistic UI update
+    setBoardData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        columns: prev.columns.filter((col) => col._id !== columnId),
+      };
+    });
+
     try {
       await deleteColumn(columnId);
       if (boardData?.board?._id) {
-        await fetchBoardData(boardData.board._id);
+        // Fetch in background to ensure consistency
+        fetchBoardData(boardData.board._id);
       }
     } catch (err) {
+      // Revert on error
+      setBoardData(previousBoardData);
       alert(err.message || 'Failed to delete column');
     }
   };
@@ -183,9 +197,9 @@ function BoardPage() {
     }
   };
 
-  const handleUpdateColumn = async (columnId, title) => {
+  const handleUpdateColumn = async (columnId, title, color) => {
     try {
-      await updateColumn(columnId, title);
+      await updateColumn(columnId, title, color);
       if (boardData?.board?._id) {
         await fetchBoardData(boardData.board._id);
       }
@@ -262,10 +276,10 @@ function BoardPage() {
             Add a column
           </button>
           <button 
-            className={`btn-mono-action ${isDeleteMode ? '' : 'btn-mono-danger'}`} 
+            className="btn-mono-action btn-mono-danger" 
             onClick={() => setIsDeleteMode(!isDeleteMode)}
           >
-            {isDeleteMode ? 'Done deleting' : 'Delete a column'}
+            Delete a column
           </button>
         </div>
       </header>
@@ -280,7 +294,7 @@ function BoardPage() {
           <div className="status-message" style={{ color: '#fca5a5' }}>{error}</div>
         ) : (
           <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="columns-wrapper" ref={animationParent}>
+            <div className="columns-wrapper" ref={animationParent} data-columns={boardData?.columns?.length || 0}>
               {boardData?.columns && boardData.columns.length > 0 ? (
                 boardData.columns.map((column) => (
                   <Column

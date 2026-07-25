@@ -3,12 +3,13 @@ const router = express.Router();
 const Board = require('../models/board');
 const Column = require('../models/column');
 const Task = require('../models/task');
+const { protect } = require('../middleware/auth');
 
 // POST /api/boards - Create a new board
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { title } = req.body;
-    const board = new Board({ title });
+    const board = new Board({ title, user: req.user.id });
     await board.save();
     res.status(201).json(board);
   } catch (err) {
@@ -17,9 +18,9 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/boards - Get all boards
-router.get('/', async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
-    const boards = await Board.find().sort({ createdAt: -1 });
+    const boards = await Board.find({ user: req.user.id }).sort({ createdAt: -1 });
     res.json(boards);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -27,9 +28,9 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/boards/:id - Get a single board with columns and tasks
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
   try {
-    const board = await Board.findById(req.params.id);
+    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
     if (!board) {
       return res.status(404).json({ message: 'Board not found' });
     }
@@ -50,11 +51,11 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT /api/boards/:id - Update board title
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const { title } = req.body;
-    const board = await Board.findByIdAndUpdate(
-      req.params.id,
+    const board = await Board.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
       { title },
       { new: true }
     );
@@ -65,14 +66,20 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/boards/:id - Delete a board and all its data
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
+    // Check if board exists and belongs to user
+    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
+    if (!board) {
+      return res.status(404).json({ message: 'Board not found or unauthorized' });
+    }
+
     const columns = await Column.find({ boardId: req.params.id });
     const columnIds = columns.map(col => col._id);
 
     await Task.deleteMany({ columnId: { $in: columnIds } });
     await Column.deleteMany({ boardId: req.params.id });
-    await Board.findByIdAndDelete(req.params.id);
+    await board.deleteOne();
 
     res.json({ message: 'Board deleted' });
   } catch (err) {

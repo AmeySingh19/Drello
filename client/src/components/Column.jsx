@@ -8,12 +8,27 @@ function Column({ column, columns, isDeleteMode, onDeleteColumn, onAddTask, onDe
 
   const handleUpdateTitle = async () => {
     if (editedTitle.trim() && editedTitle !== column.title) {
-      await onUpdateColumn(column._id, editedTitle.trim());
+      await onUpdateColumn(column._id, editedTitle.trim(), column.color);
     } else {
       setEditedTitle(column.title);
     }
     setIsEditingTitle(false);
   };
+
+  const handleUpdateColor = async (color) => {
+    if (color !== column.color) {
+      await onUpdateColumn(column._id, column.title, color);
+    }
+  };
+
+  const COLORS = [
+    { value: '', label: 'Default' },
+    { value: 'rgba(234, 179, 8, 0.25)', label: 'Yellow' },
+    { value: 'rgba(34, 197, 94, 0.25)', label: 'Green' },
+    { value: 'rgba(59, 130, 246, 0.25)', label: 'Blue' },
+    { value: 'rgba(239, 68, 68, 0.25)', label: 'Red' },
+    { value: 'rgba(168, 85, 247, 0.25)', label: 'Purple' }
+  ];
 
   const handleAddTask = () => {
     onAddTask(column._id, '+');
@@ -21,8 +36,25 @@ function Column({ column, columns, isDeleteMode, onDeleteColumn, onAddTask, onDe
 
   return (
     <div className="column">
-      <div className="column-header">
+      <div 
+        className="column-header" 
+        style={{ 
+          background: column.color ? column.color : 'linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%)',
+          borderBottom: column.color ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(255, 255, 255, 0.08)'
+        }}
+      >
         <div className="column-title-box">
+          <div className="column-color-picker">
+            {COLORS.map((c) => (
+              <div 
+                key={c.value}
+                className={`color-swatch ${column.color === c.value ? 'active' : ''}`}
+                style={{ backgroundColor: c.value || 'rgba(255, 255, 255, 0.1)' }}
+                onClick={() => handleUpdateColor(c.value)}
+                title={c.label}
+              />
+            ))}
+          </div>
           {isEditingTitle ? (
             <input
               className="column-title-input"

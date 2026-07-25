@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/task');
+const { protect } = require('../middleware/auth');
 
 // POST /api/tasks - Create a new task card
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { columnId, title, description, order } = req.body;
     const task = new Task({ columnId, title, description, order });
@@ -15,7 +16,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/tasks/:id - Edit a task
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, async (req, res) => {
   try {
     const { title, description, order } = req.body;
     const updateData = {};
@@ -35,7 +36,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/tasks/:id - Delete a task
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, async (req, res) => {
   try {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: 'Task deleted' });
@@ -45,7 +46,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // PUT /api/tasks/:id/move - Move task to another column (and optionally update order)
-router.put('/:id/move', async (req, res) => {
+router.put('/:id/move', protect, async (req, res) => {
   try {
     const { columnId, order } = req.body;
     const updateData = {};
