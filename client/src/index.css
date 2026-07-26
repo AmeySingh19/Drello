@@ -224,6 +224,22 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: crosshair; /* Optional: adds a neat crosshair for dropzones */
+}
+
+.custom-cursor-tooltip {
+  position: fixed;
+  pointer-events: none;
+  background-color: var(--foreground);
+  color: var(--background);
+  font-family: var(--font-inter);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  transform: translate(15px, 15px);
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .dropzone-background-grid {

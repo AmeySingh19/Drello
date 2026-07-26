@@ -9,6 +9,8 @@ function HomePage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleCreateBoard = async () => {
     try {
@@ -22,14 +24,37 @@ function HomePage() {
     }
   };
 
+  const handleMouseMove = (e) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+
   return (
     <div className="page-container starthack-hero-main">
       {/* Floating Pill Nav Dock */}
       <NavDock />
 
       {/* Main Full-Screen Dashed Hero Dropzone */}
-      <main className="dropzone-container" onClick={handleCreateBoard}>
+      <main 
+        className="dropzone-container" 
+        onClick={handleCreateBoard}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
         <div className="dropzone-background-grid" />
+        
+        {isHovering && (
+          <div 
+            className="custom-cursor-tooltip"
+            style={{ 
+              left: mousePos.x, 
+              top: mousePos.y 
+            }}
+          >
+            Click to create board
+          </div>
+        )}
         
         <div className="hero-text-block">
           <h3 className="hero-h3">DROP YOUR</h3>
