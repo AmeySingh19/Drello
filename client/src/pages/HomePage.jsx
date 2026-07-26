@@ -56,7 +56,17 @@ function HomePage() {
           </div>
         )}
         
-        <div className="hero-text-block">
+        <div 
+          className="hero-text-block"
+          onMouseEnter={(e) => {
+            e.stopPropagation();
+            setIsHovering(false);
+          }}
+          onMouseLeave={(e) => {
+            e.stopPropagation();
+            setIsHovering(true);
+          }}
+        >
           <h3 className="hero-h3">DROP YOUR</h3>
           <h4 className="hero-h4">TASKS</h4>
           
