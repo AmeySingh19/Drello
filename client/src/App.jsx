@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import AuthContext from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import BoardPage from './pages/BoardPage';
@@ -21,13 +21,20 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/board" element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />
-      <Route path="/board/:id" element={<ProtectedRoute><BoardPage /></ProtectedRoute>} />
+      <Route path="/board" element={<BoardPage />} />
+      <Route path="/board/:id" element={<BoardPage />} />
     </Routes>
   );
 }

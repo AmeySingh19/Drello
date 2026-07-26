@@ -14,6 +14,98 @@
   --font-mono: 'Roboto Mono', monospace;
 }
 
+body.light-mode {
+  --background: #f4f4f5;
+  --foreground: #09090b;
+  --muted: #e4e4e7;
+  --muted-foreground: #71717a;
+  --border: rgba(9, 9, 11, 0.2);
+  --border-subtle: rgba(9, 9, 11, 0.12);
+  --card: #ffffff;
+  --card-hover: #fcfcfd;
+}
+
+body.light-mode .column {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+}
+body.light-mode .column:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+body.light-mode .column-title { color: rgba(0, 0, 0, 0.85); }
+body.light-mode .column-title:hover { color: #000; }
+body.light-mode .column-title-input {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #000;
+}
+body.light-mode .column-header {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03) 0%, transparent 100%);
+}
+body.light-mode .color-swatch { border-color: rgba(0, 0, 0, 0.2); }
+body.light-mode .color-swatch:hover, body.light-mode .color-swatch.active { border-color: rgba(0, 0, 0, 0.9); }
+body.light-mode .task-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+body.light-mode .task-card:hover {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+body.light-mode .task-move-select { background-color: #f4f4f5; }
+body.light-mode .add-task-btn {
+  border-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+body.light-mode .add-task-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.4);
+}
+body.light-mode .add-task-btn:hover span { color: #000; }
+body.light-mode .starthack-btn { background-color: rgba(9, 9, 11, 0.04); }
+body.light-mode .starthack-btn:hover {
+  background-color: rgba(9, 9, 11, 0.1);
+  border-color: rgba(9, 9, 11, 0.4);
+}
+body.light-mode .btn-mono-action { background-color: rgba(9, 9, 11, 0.05); }
+body.light-mode .btn-mono-action:hover {
+  background-color: rgba(9, 9, 11, 0.15);
+  border-color: rgba(9, 9, 11, 0.4);
+}
+body.light-mode .nav-dock-item:hover { background-color: rgba(9, 9, 11, 0.1); }
+body.light-mode .empty-board-message { background: #ffffff; }
+body.light-mode .auth-page-wrapper { background-color: #f4f4f5; }
+body.light-mode .dropzone-background-grid {
+  background-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 2px, #e4e4e7 2px);
+}
+body.light-mode .auth-brand-text { color: #000; }
+body.light-mode .auth-brand-text span { color: rgba(0,0,0,0.8); }
+body.light-mode .auth-close-btn:hover { color: #000; }
+body.light-mode .auth-icon-wrapper { color: #52525b; }
+body.light-mode .auth-title { color: #000; }
+body.light-mode .auth-input {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+body.light-mode .auth-input:focus {
+  border-color: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.06);
+}
+body.light-mode .auth-input::placeholder { color: rgba(0, 0, 0, 0.4); }
+body.light-mode .auth-link-small { color: rgba(0, 0, 0, 0.6); }
+body.light-mode .auth-link-small:hover { color: #000; }
+body.light-mode .auth-submit-btn {
+  background: #000;
+  color: #fff;
+}
+body.light-mode .auth-footer { color: rgba(0, 0, 0, 0.6); }
+body.light-mode .auth-link { color: rgba(0, 0, 0, 0.8); }
+body.light-mode .auth-link:hover { color: #000; }
+
 * {
   box-sizing: border-box;
   margin: 0;

@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBoard } from '../api/boardApi';
 import Footer from '../components/Footer';
 import NavDock from '../components/NavDock';
+import AuthContext from '../context/AuthContext';
 
 function HomePage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleCreateBoard = async () => {
     try {
@@ -34,7 +36,7 @@ function HomePage() {
           <h4 className="hero-h4">TASKS</h4>
           
           <p className="hero-p">
-            and manage your workflow the way recruiters scan resumes — then structure your project execution before you start.
+            and manage your workflow with intuitive drag-and-drop boards — structure your project execution effortlessly before you even start.
           </p>
 
           <button

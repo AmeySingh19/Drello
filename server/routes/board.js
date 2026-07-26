@@ -3,13 +3,15 @@ const router = express.Router();
 const Board = require('../models/board');
 const Column = require('../models/column');
 const Task = require('../models/task');
-const { protect } = require('../middleware/auth');
+const { protect, optionalAuth } = require('../middleware/auth');
 
 // POST /api/boards - Create a new board
-router.post('/', protect, async (req, res) => {
+router.post('/', optionalAuth, async (req, res) => {
   try {
     const { title } = req.body;
-    const board = new Board({ title, user: req.user.id });
+    const boardData = { title };
+    if (req.user) boardData.user = req.user.id;
+    const board = new Board(boardData);
     await board.save();
     res.status(201).json(board);
   } catch (err) {
@@ -28,9 +30,9 @@ router.get('/', protect, async (req, res) => {
 });
 
 // GET /api/boards/:id - Get a single board with columns and tasks
-router.get('/:id', protect, async (req, res) => {
+router.get('/:id', optionalAuth, async (req, res) => {
   try {
-    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
+    const board = await Board.findById(req.params.id);
     if (!board) {
       return res.status(404).json({ message: 'Board not found' });
     }
@@ -51,11 +53,11 @@ router.get('/:id', protect, async (req, res) => {
 });
 
 // PUT /api/boards/:id - Update board title
-router.put('/:id', protect, async (req, res) => {
+router.put('/:id', optionalAuth, async (req, res) => {
   try {
     const { title } = req.body;
-    const board = await Board.findOneAndUpdate(
-      { _id: req.params.id, user: req.user.id },
+    const board = await Board.findByIdAndUpdate(
+      req.params.id,
       { title },
       { new: true }
     );
@@ -66,12 +68,12 @@ router.put('/:id', protect, async (req, res) => {
 });
 
 // DELETE /api/boards/:id - Delete a board and all its data
-router.delete('/:id', protect, async (req, res) => {
+router.delete('/:id', optionalAuth, async (req, res) => {
   try {
-    // Check if board exists and belongs to user
-    const board = await Board.findOne({ _id: req.params.id, user: req.user.id });
+    // Check if board exists
+    const board = await Board.findById(req.params.id);
     if (!board) {
-      return res.status(404).json({ message: 'Board not found or unauthorized' });
+      return res.status(404).json({ message: 'Board not found' });
     }
 
     const columns = await Column.find({ boardId: req.params.id });
