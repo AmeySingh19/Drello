@@ -1,7 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
-import NavDock from '../components/NavDock';
 
 function SignupPage() {
   const [email, setEmail] = useState('');
@@ -39,72 +38,81 @@ function SignupPage() {
   };
 
   return (
-    <div className="page-container">
-      <NavDock />
+    <div className="auth-page-wrapper">
+      <div className="auth-split-left">
+        <div className="auth-split-left-overlay"></div>
+        <div className="auth-split-left-content">
+          <h1 className="auth-brand-text">
+            Drello_<span>Your Missions, Organized</span>
+          </h1>
+        </div>
+      </div>
       
-      <main className="auth-page-wrapper">
-        <div className="dropzone-background-grid" />
-        <div className="auth-glow" />
+      <div className="auth-split-right">
+        <button onClick={() => navigate('/')} className="auth-close-btn" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+          </svg>
+        </button>
         
-        <div className="auth-card">
-          <h3 className="auth-title">Create Account</h3>
-          <p className="auth-subtitle">Join us to start managing your projects</p>
+        <div className="auth-form-container">
+          <div className="auth-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+              <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+              <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+              <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+            </svg>
+          </div>
+          
+          <h2 className="auth-title">Sign up for Drello</h2>
           
           {error && <div className="auth-error">{error}</div>}
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
             <div className="auth-input-group">
-              <label className="auth-label">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="auth-input"
-                placeholder="name@example.com"
+                placeholder="Email"
                 required
               />
             </div>
             
             <div className="auth-input-group">
-              <label className="auth-label">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="auth-input"
-                placeholder="••••••••"
+                placeholder="Password"
                 required
               />
             </div>
             
-            <div className="auth-input-group">
-              <label className="auth-label">Confirm Password</label>
+            <div className="auth-input-group" style={{ marginBottom: '32px' }}>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="auth-input"
-                placeholder="••••••••"
+                placeholder="Confirm Password"
                 required
               />
             </div>
             
-            <div className="auth-btn-wrapper">
-              <button
-                type="submit"
-                className="starthack-btn"
-                style={{ width: '100%' }}
-              >
-                Sign Up
-              </button>
-            </div>
+            <button type="submit" className="auth-submit-btn">
+              Continue
+            </button>
           </form>
           
           <div className="auth-footer">
             Already have an account? <Link to="/login" className="auth-link">Log in</Link>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

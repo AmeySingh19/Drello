@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Roboto+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Roboto+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 :root {
   --background: #09090b;
@@ -777,91 +777,120 @@ html, body {
   text-transform: uppercase;
 }
 
-/* Premium Auth Pages Styling */
+/* Premium Auth Pages Styling (Split Screen) */
 .auth-page-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-.auth-glow {
-  position: absolute;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(90, 85, 200, 0.12) 0%, rgba(0,0,0,0) 70%);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.auth-card {
-  background: rgba(14, 14, 17, 0.65);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 48px;
   width: 100%;
-  max-width: 440px;
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
+  background-color: #1a1a1c;
+}
+
+.auth-split-left {
+  flex: 1;
+  display: none;
   position: relative;
-  overflow: hidden;
+  background-image: url('./assets/auth-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.auth-card::before {
-  content: '';
+@media (min-width: 900px) {
+  .auth-split-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.auth-split-left-overlay {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
 }
 
-.auth-title {
-  font-size: 2.25rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.auth-split-left-content {
+  position: relative;
+  z-index: 10;
+  padding: 40px;
   text-align: center;
 }
 
-.auth-subtitle {
+.auth-brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.auth-brand-text span {
+  font-family: var(--font-inter);
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.8);
+  margin-left: 8px;
+}
+
+.auth-split-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+}
+
+.auth-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: transparent;
+  border: none;
   color: var(--muted-foreground);
-  font-size: 0.95rem;
-  margin-bottom: 32px;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 8px;
+}
+
+.auth-close-btn:hover {
+  color: #fff;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-icon-wrapper {
+  margin-bottom: 24px;
+  color: #e4e4e7;
+}
+
+.auth-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 40px;
   text-align: center;
 }
 
 .auth-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.auth-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
 .auth-input {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 14px 16px;
-  border-radius: 12px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 18px;
+  border-radius: 8px;
   color: #fff;
   font-family: var(--font-inter);
   font-size: 0.95rem;
@@ -871,27 +900,71 @@ html, body {
 .auth-input:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .auth-input::placeholder {
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.auth-options {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+}
+
+.auth-link-small {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+}
+
+.auth-link-small:hover {
+  color: #fff;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: var(--font-inter);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-bottom: 24px;
+}
+
+.auth-submit-btn:hover {
+  opacity: 0.9;
+}
+
+.auth-footer {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
 }
 
 .auth-link {
-  color: #fff;
-  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: underline;
+  text-underline-offset: 4px;
   font-weight: 500;
-  transition: opacity 0.2s;
+  transition: color 0.2s;
 }
 
 .auth-link:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+  color: #fff;
 }
 
 .auth-error {
+  width: 100%;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
   color: #f87171;
@@ -899,12 +972,5 @@ html, body {
   border-radius: 8px;
   font-size: 0.85rem;
   margin-bottom: 24px;
-  text-align: center;
-}
-
-.auth-footer {
-  margin-top: 32px;
-  font-size: 0.85rem;
-  color: var(--muted-foreground);
   text-align: center;
 }
