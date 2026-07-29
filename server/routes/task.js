@@ -3,7 +3,6 @@ const router = express.Router();
 const Task = require('../models/task');
 const { optionalAuth } = require('../middleware/auth');
 
-// POST /api/tasks - Create a new task card
 router.post('/', optionalAuth, async (req, res) => {
   try {
     const { columnId, title, description, order } = req.body;
@@ -15,7 +14,6 @@ router.post('/', optionalAuth, async (req, res) => {
   }
 });
 
-// PUT /api/tasks/:id - Edit a task
 router.put('/:id', optionalAuth, async (req, res) => {
   try {
     const { title, description, order } = req.body;
@@ -35,7 +33,6 @@ router.put('/:id', optionalAuth, async (req, res) => {
   }
 });
 
-// DELETE /api/tasks/:id - Delete a task
 router.delete('/:id', optionalAuth, async (req, res) => {
   try {
     await Task.findByIdAndDelete(req.params.id);
@@ -45,7 +42,6 @@ router.delete('/:id', optionalAuth, async (req, res) => {
   }
 });
 
-// PUT /api/tasks/:id/move - Move task to another column (and optionally update order)
 router.put('/:id/move', optionalAuth, async (req, res) => {
   try {
     const { columnId, order } = req.body;

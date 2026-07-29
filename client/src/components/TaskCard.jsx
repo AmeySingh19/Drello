@@ -10,7 +10,6 @@ function TaskCard({ task, index, columns = [], onDelete, onMove, onUpdate }) {
     if (newTitle && newTitle !== task.title) {
       await onUpdate(task._id, newTitle);
     } else if (!newTitle && task.title === '+') {
-      // Keep it editable or reset to empty
       setIsEditing(true);
       return;
     } else {

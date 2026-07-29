@@ -31,10 +31,8 @@ function HomePage() {
 
   return (
     <div className="page-container starthack-hero-main">
-      {/* Floating Pill Nav Dock */}
       <NavDock />
 
-      {/* Main Full-Screen Dashed Hero Dropzone */}
       <main 
         className="dropzone-container" 
         onClick={handleCreateBoard}
@@ -99,7 +97,6 @@ function HomePage() {
         </div>
       </main>
 
-      {/* Monospace 11px Uppercase Footer */}
       <Footer />
     </div>
   );

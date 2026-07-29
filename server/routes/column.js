@@ -4,7 +4,6 @@ const Column = require('../models/column');
 const Task = require('../models/task');
 const { optionalAuth } = require('../middleware/auth');
 
-// POST /api/columns - Add a new column
 router.post('/', optionalAuth, async (req, res) => {
   try {
     const { boardId, title, order, color } = req.body;
@@ -16,7 +15,6 @@ router.post('/', optionalAuth, async (req, res) => {
   }
 });
 
-// PUT /api/columns/:id - Edit column (title/order)
 router.put('/:id', optionalAuth, async (req, res) => {
   try {
     const { title, order, color } = req.body;
@@ -36,7 +34,6 @@ router.put('/:id', optionalAuth, async (req, res) => {
   }
 });
 
-// DELETE /api/columns/:id - Delete a column and its tasks
 router.delete('/:id', optionalAuth, async (req, res) => {
   try {
     await Task.deleteMany({ columnId: req.params.id });

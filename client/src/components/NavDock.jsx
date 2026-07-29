@@ -10,8 +10,6 @@ function NavDock() {
   const handleAccountClick = (e) => {
     e.preventDefault();
     if (user) {
-      // Logout logic or redirect to profile if you had one.
-      // We will do a simple logout for now.
       if (window.confirm('Are you sure you want to log out?')) {
         logout();
         navigate('/');

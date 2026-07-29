@@ -5,7 +5,6 @@ const Column = require('../models/column');
 const Task = require('../models/task');
 const { protect, optionalAuth } = require('../middleware/auth');
 
-// POST /api/boards - Create a new board
 router.post('/', optionalAuth, async (req, res) => {
   try {
     const { title } = req.body;
@@ -19,7 +18,6 @@ router.post('/', optionalAuth, async (req, res) => {
   }
 });
 
-// GET /api/boards - Get all boards
 router.get('/', protect, async (req, res) => {
   try {
     const boards = await Board.find({ user: req.user.id }).sort({ createdAt: -1 });
@@ -29,7 +27,6 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-// GET /api/boards/:id - Get a single board with columns and tasks
 router.get('/:id', optionalAuth, async (req, res) => {
   try {
     const board = await Board.findById(req.params.id);
@@ -52,7 +49,6 @@ router.get('/:id', optionalAuth, async (req, res) => {
   }
 });
 
-// PUT /api/boards/:id - Update board title
 router.put('/:id', optionalAuth, async (req, res) => {
   try {
     const { title } = req.body;
@@ -67,10 +63,8 @@ router.put('/:id', optionalAuth, async (req, res) => {
   }
 });
 
-// DELETE /api/boards/:id - Delete a board and all its data
 router.delete('/:id', optionalAuth, async (req, res) => {
   try {
-    // Check if board exists
     const board = await Board.findById(req.params.id);
     if (!board) {
       return res.status(404).json({ message: 'Board not found' });

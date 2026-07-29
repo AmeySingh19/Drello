@@ -54,7 +54,6 @@ function BoardPage() {
         if (id) {
           if (!ignore) await fetchBoardData(id);
         } else {
-          // If accessing /board without id, find existing board or create one
           const boards = await getBoards();
           if (boards && boards.length > 0) {
             navigate(`/board/${boards[0]._id}`, { replace: true });
@@ -93,7 +92,6 @@ function BoardPage() {
   const handleDeleteColumnById = async (columnId) => {
     const previousBoardData = boardData;
     
-    // Optimistic UI update
     setBoardData((prev) => {
       if (!prev) return prev;
       return {
@@ -105,11 +103,9 @@ function BoardPage() {
     try {
       await deleteColumn(columnId);
       if (boardData?.board?._id) {
-        // Fetch in background to ensure consistency
         fetchBoardData(boardData.board._id);
       }
     } catch (err) {
-      // Revert on error
       setBoardData(previousBoardData);
       alert(err.message || 'Failed to delete column');
     }
@@ -235,10 +231,8 @@ function BoardPage() {
 
   return (
     <div className="page-container starthack-board-container">
-      {/* Floating Pill Nav Dock */}
       <NavDock />
 
-      {/* Top Header Bar matching wireframe controls with hero design */}
       <header className="board-header-bar">
         <div className="board-header-left">
           <Link to="/" className="brand-mono-title">
@@ -284,7 +278,6 @@ function BoardPage() {
         </div>
       </header>
 
-      {/* Dashed Hero-Style Main Board View Canvas */}
       <main className="dropzone-container board-dropzone-canvas">
         <div className="dropzone-background-grid" />
         
@@ -320,7 +313,6 @@ function BoardPage() {
         )}
       </main>
 
-      {/* Monospace 11px Footer matching wireframe links */}
       <Footer />
     </div>
   );
